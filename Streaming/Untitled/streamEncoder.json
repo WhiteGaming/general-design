@@ -1,0 +1,7 @@
+{
+    "bitrate": 3500,
+    "keyint_sec": 2,
+    "preset": "fast",
+    "profile": "main",
+    "use_bufsize": false
+}

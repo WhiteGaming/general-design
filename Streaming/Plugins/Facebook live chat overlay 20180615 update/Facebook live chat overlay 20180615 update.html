@@ -1,0 +1,485 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Facebook Live Reactions Poll</title>
+	<link href="https://fonts.googleapis.com/css?family=Roboto+Condensed" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+	<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+	<script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+	<script type="text/javascript">
+		/** Script Settings **/
+		/** Get your AccessToken from https://developers.facebook.com/tools/explorer/ and insert it in between '' **/
+		/** Get your PostID from right click on your video and show URL and insert it in between ''. For instance https://www.facebook.com/1377488892322005/videos/1386803121390582/ then 1386803121390582 is the postID **/
+		/** If you are livestreaming on your page, click gear button, embed, copy and paste. Then you will see something like <iframe src="https://www.facebook.com/plugins/video.php?href=https%3A%2F%2Fwww.facebook.com%2F1377488892322005%2Fvideos%2F1387652961305598%2F&width=400" width="400" height="400" style="border:none;overflow:hidden" scrolling="no" frameborder="0" allowTransparency="true" allowFullScreen="true"></iframe> **/
+		/** from the part "www.facebook.com%2F1377488892322005%2Fvideos%2F1387652961305598", after Fvideos%, it says 2F~~~~, in this case, 1387652961305598 is your postID. **/
+		/** All the rights belong to https://livereactionspoll.com/. The owner of this code allowed me to edit this. Support this page if you like this. **/
+		/** It doesn't show comments from shared posts. **/
+
+		/**var accessToken = 'YOUR ACCESSTOKEN', **/
+		/**postID = 'YOUR POSTID'; **/
+		
+		var accessToken = '2090365254384477|QlTJLW-pfebqfv1blx7dN7T_FY8',
+		postID = '2295581787397067';
+		
+	</script>
+	<style type="text/css">
+		* {
+			margin: 0;
+			padding: 0;
+			border: 0;
+			box-sizing: border-box;
+		}
+		html {
+			position: relative;
+			font-size: 16px;
+		}
+		body {
+			margin: 0;
+			padding: 0;
+			font-size: 100%;
+			font-family: 'Roboto Condensed', sans-serif;
+		}
+		.container {
+			position: relative;
+			top: 0;
+			left: 0;
+			width: 1280px;
+			height: 410px;
+			background-color: transparent;
+						overflow: hidden;
+		}
+		img {
+			max-width: 100%;
+			height: auto;
+		}
+		.overlay {
+			position: fixed;
+			z-index: 9999999999;
+			background: rgba(255,255,255, 0.875);
+			width: 100%;
+			height: 100%;
+		}
+		.overlay-message {
+			width: 512px;
+			margin: 2em 1em;
+			font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+		}
+		.overlay-message p {
+			margin-bottom: 1em;
+			font-weight: 500;
+			line-height: 1.5;
+		}
+		.overlay-message a {
+			display: inline-block;
+			color: #fff;
+			background: tomato;
+			padding: 0.75em 1.5em;
+			text-decoration: none;
+			border-radius: 0.325em;
+		}
+	</style>
+</head>
+
+<body>
+		<div class="container">
+		<!-- Template Start -->
+<style type="text/css">		
+	.counter {
+		display: inline-block;
+		cursor: move;
+		width: 128px;
+	}
+
+	.counter-bg {
+		background: rgba(255,99,71, 0.5);
+	}
+
+	.counter p {
+		font-size: 0px;
+		color: #fff;
+		text-align: center;
+	}
+
+	.counter span {
+		display: block;
+		position: absolute;
+		background: #fff;
+		border-radius: 0.25em;
+		padding: 0.25em;
+		bottom: -2em;
+		left: 50%;
+		transform: translateX(-50%);
+		border: 1px solid #eee;
+	}
+
+	.properties {
+		position: absolute;
+		width: 10rem;
+		top: 0.5em;
+		right: 1em;
+		background: #fff;
+		border-radius: 0.25em;
+		padding: 1em;
+		border: 1px solid #eee;
+		z-index: 100;
+	}
+	.properties:hover {
+		cursor: move;
+	}
+
+	.properties small {
+		display: block;
+		color: #999;
+		margin-top: 0.5em;
+	}
+
+	label {
+		display: block;
+		margin-bottom: 0.5em;
+	}
+
+	input,
+	select {
+		display: block;
+		width: 100%;
+		border: 1px solid #ddd;
+		border-radius: 0.25em;
+		padding: 0.25em;
+	}
+	input:focus,
+	select:focus {
+		outline: 0;
+		border-color: #bbb;
+	}
+
+	button {
+		background: tomato;
+		color: #fff;
+		border: 0;
+		border-radius: 0.25em;
+		width: 100%;
+		padding: 0.25em 0;
+		cursor: pointer;
+	}
+
+	button:focus {
+		outline: 0;
+	}
+</style>
+
+<script>
+$(document).ready(function(){
+
+	$('.counter').draggable({
+		containment: '.container',
+		cursor: 'move'
+	});
+
+	$('.counter').focus(function(){
+		$(this).css( "border", "2px solid #e74c3c" );
+	});
+
+	$('.counter').focusout(function(){
+		$(this).css( "border", "0" );	
+	});
+
+	$(document).keydown(function(e) {
+		var key = e.which;
+		if(!(key === 37 || key === 38 || key === 39 || key === 40))
+			return;
+		
+		var focused = $(':focus');
+		if(!focused.hasClass('counter'))
+			return;
+
+		focused.css( "border", "2px solid #2ecc71" );
+
+		var left = focused.offset().left,
+		top = focused.offset().top,
+		isShift = !!e.shiftKey,
+		increment = isShift ? 10 : 1;
+
+		switch(e.which) {
+			case 37: left -= increment;
+			break;
+
+			case 38: top -= increment;
+			break;
+
+			case 39: left += increment;
+			break;
+
+			case 40: top += increment;
+			break;
+
+			default: return;
+		}
+		focused.css({
+			"left" : left + "px",
+			"top" : top + "px"
+		});
+		e.preventDefault();
+	});
+
+	$('.properties').draggable({
+		containment: '.container',
+		cursor: 'move'
+	});
+
+	$('#color').on('change keyup', function(){
+		$('.counter p').css({'color' : $(this).val()});
+	});
+
+	$('#size').on('change keyup', function(){
+		$('.counter p').css({'font-size' : $(this).val() + 'px'});
+	});
+
+	$('#width').on('change keyup', function(){
+		$('.counter').css({'width' : $(this).val() + 'px'});
+	});
+
+	$('#align').on('change keyup', function(){
+		$('.counter p').css({'text-align' : $(this).val()});
+	});
+
+	$('#hide').on('click', function(){
+		$('.properties').fadeOut();
+		$('.counter span').fadeOut();
+		$('.counter').removeClass('counter-bg');
+	});
+
+	$('.container').on('contextmenu', function(e){
+		e.preventDefault();
+		$('.properties').fadeIn();
+		$('.counter span').fadeIn();
+		$('.counter').addClass('counter-bg');
+	});
+
+});
+function update() {
+		$('#like').text(counters.like);	}
+</script>
+<!-- Template End --><!-- Shoutbox Start -->
+<style>
+	#shoutbox {
+		display: inline;
+		list-style: none;
+		font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+		position: absolute;
+		width: 30rem;
+		bottom: 0;
+		left: 0;
+		padding: 1rem 1rem;
+		z-index: 93;
+	}
+
+	#shoutbox li {
+		display: none;
+		margin-bottom: 0.2em;
+	}
+
+	.comment {
+		font-size: 1.2rem;
+		/** This line changes the size of the message.**/
+		display: block;
+		background: rgba(0,0,0, 0.5);
+		/** This line changes the background box color.**/
+		padding: 0.1em;
+		border-radius: 0.25em;
+		overflow: hidden;
+		box-shadow: 0 2px 2px 0 rgba(0,0,0,0), 0 1px 5px 0 rgba(0,0,0,0), 0 3px 1px -2px rgba(0,0,0,0)
+	}
+
+	.name {
+		display: block;
+		font-weight: 700;
+		/** This line changes the boldness of the name. MAX 900**/
+		color: #6666ff;
+		/** This line changes the color of the name. Find the color you want on http://www.color-hex.com/ to customize it**/
+		font-size: 1.2em;
+		/** This line changes the size of the name.**/
+		margin-bottom: 0.25em;
+	}
+
+	.message {
+		color: #ffffff;
+		/** This line changes the color of the message. Find the color you want on http://www.color-hex.com/ to customize it**/
+				font-weight: 400;
+		/** This line changes the boldness of the message. MAX 900**/
+	}
+
+	.message em {
+		color: #03A9F4;
+	}
+
+	.message img {
+		max-width: 4em;
+		float: left;
+		margin-right: 0.5em;
+		margin-bottom: 0.5em;
+	}
+
+	.time {
+		display: block;
+		font-size: 0.0em;
+		color: #777;
+		margin-top: 0.25em;
+		clear: both;
+	}
+</style>
+
+<ul id="shoutbox">
+</ul>
+
+<script type="text/javascript">
+	var shoutboxUrl = 'https://graph.facebook.com/v2.8/' + postID + '?fields=comments.limit(33).order(reverse_chronological){message, attachment{media{image{src}}}, created_time, message_tags{name}, from{name,id}}' + '&access_token=' + accessToken,
+	oldCommentsID = [];
+
+	function shoutboxUpdate() {
+		$.getJSON(shoutboxUrl, function(response){
+			if(response.comments) {
+				var comments =  response.comments.data;
+
+				for(var i = comments.length - 1; i >= 0; i--) {
+					if(oldCommentsID.indexOf(comments[i].id) === -1) {
+
+						var message = comments[i].message,
+						name = comments[i].from.name,
+						time = comments[i].created_time,
+						commentImage = '', tags = [];
+
+						if(comments[i].attachment) {
+							commentImage = '<img src="' + comments[i].attachment.media.image.src + '">';
+						}
+						if(comments[i].message_tags) {
+							tags = comments[i].message_tags;
+							for(j = 0; j < tags.length; j++) {
+								message = message.replace(tags[j].name, "<em>@" + tags[j].name + "</em>");
+							}
+						}
+						$('<li></li>')
+							.html('<div class="comment"><span class="name">' + name + '</span><span class="message">' + commentImage + message + '</span><span class="time" data-time="' + time + '">Just now</span></div>')
+							.appendTo('#shoutbox').show('slow');
+						oldCommentsID.push(comments[i].id);
+					}
+				}			
+			}
+		})
+		.fail(function(data){
+			response = JSON.parse(data.responseText);
+			alert('Error: ' + response.error.message);
+			clearInterval(shoutboxInterval);
+		});
+		updateTime();
+	}
+
+	function updateTime() {
+		var times = $('.time'),
+		endDate = new Date(),
+		time, seconds;
+
+		for(var i = 0; i < times.length; i++) {
+			time = new Date($(times[i]).data('time'));
+			seconds = (endDate - time) / 1000;
+			
+			time = 'Just now';
+			if(seconds > 60) time = '1 Min ago';
+			if(seconds > 120) time = Math.floor(seconds/60) + ' Mins ago';
+			if(seconds > 3600) time = '1 Hr ago';
+			if(seconds > 7200) time = Math.floor(seconds/3600) + ' Hrs ago';
+			
+			$(times[i]).text(time);
+		}
+	}
+	shoutboxUpdate();
+	var shoutboxInterval = setInterval(shoutboxUpdate, 3 * 1000);
+</script>
+<!-- Shoutbox End --><!-- Start Include Shared Posts -->
+<script type="text/javascript">
+	function updateSharedPosts() {
+		var url = 'https://graph.facebook.com/v2.8/' + postID + '/sharedposts?&fields=id&limit=99999&access_token=' + accessToken;
+		$.getJSON(url, function(response) {
+			sharedPosts = [];
+			for(var i = 0; i < response.data.length; i++)
+			{
+				sharedPosts[i] = response.data[i].id;
+			}
+			sharedPosts = sharedPosts.slice(0, 49);
+			if(sharedPosts.length >= 49)
+				clearInterval(sharedPostsInterval);
+			generateURL();
+		})
+		.fail(function(data){
+			response = JSON.parse(data.responseText);
+			console.log('Error: ' + response.error.message);
+			clearInterval(sharedPostsInterval);
+		});
+	}
+	updateSharedPosts();
+	var sharedPostsInterval = setInterval(updateSharedPosts, 60 * 1000);
+</script>
+<!-- End Include Shared Posts -->	
+	</div>
+	<script>
+	var url,
+	counters = {},
+	fields = [],
+	sharedPosts = [],
+	interval;
+
+	
+	
+	$(document).ready(function(){		
+		generateURL();
+		getCount();
+		interval = setInterval(getCount, 8 * 1000);		
+	});
+
+	function generateURL() {
+		var _fields = fields.join() !== '' ? fields.join() + ',' : '';
+		sharedPosts.unshift(postID);
+		url = 'https://graph.facebook.com/v2.8/?ids=' + sharedPosts.join() + '&fields=' + _fields;
+				url +='reactions.type(LIKE).limit(0).summary(total_count).as(reaction_like),';
+				
+		url = url.substring(0, url.length - 1);
+		url += '&access_token=' + accessToken;
+	}
+
+	function getCount() {
+		$.getJSON(url, function(response){
+						var total_like = 0;
+												for(var key in response) {
+				if (!response.hasOwnProperty(key)) continue;
+								total_like += response[key].reaction_like.summary.total_count;
+															}
+			counters = {
+								like : total_like,
+							};
+
+										
+
+						update();
+		})
+		.fail(function(data){
+			response = JSON.parse(data.responseText);
+			alert('Error: ' + response.error.message);
+			clearInterval(interval);
+		});
+	}
+</script>
+		<script type="text/javascript">
+		$(document).ready(function(){
+			$('#got-it').on('click', function(e){
+				e.preventDefault();
+				$('.overlay').fadeOut();
+			});
+
+			setTimeout(function(){
+				$('.overlay').fadeOut();
+			}, 15 * 1000);
+		});
+	</script>
+	</body>
+</html>
